@@ -2,20 +2,25 @@
 
 import { revalidatePath } from "next/cache";
 
-import User from "../database/models/user.model";
 import { connectToDatabase } from "../database/mongoose";
 import { handleError } from "../utils";
+import User from "../database/models/user.model";
 
 // CREATE
 export async function createUser(user: CreateUserParams) {
   try {
+    console.log('Connecting to database...');
     await connectToDatabase();
+    console.log('Database connected.');
 
+    console.log('Creating new user:', user);
     const newUser = await User.create(user);
+    console.log('User created:', newUser);
 
     return JSON.parse(JSON.stringify(newUser));
   } catch (error) {
-    handleError(error);
+    console.error('Error creating user:', error);
+    throw error;  // Ensure the error is thrown so the caller can handle it
   }
 }
 
